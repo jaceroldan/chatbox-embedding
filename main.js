@@ -1,5 +1,5 @@
 import { styles, CLOSE_ICON, MESSAGE_ICON } from "./assets.js";
-import axios from 'axios';
+// import axios from 'axios';
 
 
 class MessageWidget {
