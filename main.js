@@ -1,4 +1,5 @@
 import { styles, CLOSE_ICON, MESSAGE_ICON } from "./assets.js";
+import axios from 'axios';
 
 
 class MessageWidget {
@@ -71,18 +72,47 @@ class MessageWidget {
      * Invoke the `createWidget()` method
      */
     this.createWidgetContent();
-
+    
     /**
      * Append the widget's content and the button to the container
-     */
-    container.appendChild(this.widgetContainer);
-    container.appendChild(buttonContainer);
+    */
+   container.appendChild(this.widgetContainer);
+   container.appendChild(buttonContainer);
+   document.getElementById('submit-hqzen-btn').addEventListener('click', event => {
+    event.preventDefault();
+
+    const url = 'http://localhost:8000/api-sileo/v1/board/embedded-card/create/';
+    const subject = document.getElementById('floating-subject').value;
+    const name = document.getElementById('floating-name').value;
+    const email = document.getElementById('floating-email').value;
+    const message = document.getElementById('floating-message').value;
+  
+    const data = {
+      title: subject,
+      description: JSON.stringify({'ops': [
+        {'insert': `Name: ${name}`, 'attributes': {'fs': '24px'}}, {'insert': '\n'},
+        {'insert': `Email: ${email}`, 'attributes': {'fs': '24px'}}, {'insert': '\n'},
+        {'insert': `Message: ${message}`, 'attributes': {'fs': '24px'}}, {'insert': '\n'},
+      ]}),
+      column: 213,
+      creator: 84202,
+      is_public: true,
+    };
+
+    const form = new FormData();
+
+    for (let item in data) {
+      form.append(item, data[item]);
+    }
+
+    axios.post(url, form);
+   })
   }
 
   createWidgetContent() {
     this.widgetContainer.innerHTML = `
         <header class="widget__header">
-            <h3>Start a conversation</h3>
+            <h3>Unlock your business potential with our seats!</h3>
             <p>We usually respond within a few hours</p>
         </header>
         <form>
@@ -90,7 +120,7 @@ class MessageWidget {
                 <label for="name">Name</label>
                 <input
                   type="text"
-                  id="name"
+                  id="floating-name"
                   name="name"
                   placeholder="Enter your name"
                 />
@@ -99,30 +129,47 @@ class MessageWidget {
                 <label for="email">Email</label>
                 <input
                   type="email"
-                  id="email"
+                  id="floating-email"
                   name="email"
                   placeholder="Enter your email"
                 />
             </div>
             <div class="form__field">
-                <label for="subject">Subject</label>
+                <label for="subject">Type of Business</label>
                 <input
                   type="text"
-                  id="subject"
-                  name="subject"
-                  placeholder="Enter Message Subject"
+                  id="floating-subject"
+                  name="business_type"
+                  placeholder="Enter type of business"
                 />
             </div>
             <div class="form__field">
-                <label for="message">Message</label>
+                <label for="subject">Number of seats</label>
+                <input
+                  type="number"
+                  id="floating-subject"
+                  name="no_seats"
+                  placeholder="Enter number of seats"
+                />
+            </div>
+            <div class="form__field">
+                <label for="subject">Start date</label>
+                <input
+                  type="date"
+                  id="floating-subject"
+                  name="date"
+                />
+            </div>
+            <div class="form__field">
+                <label for="message">Anything specific you need?</label>
                 <textarea
-                  id="message"
+                  id="floating-message"
                   name="message"
                   placeholder="Enter your message"
                   rows="6"
                 ></textarea>
             </div>
-            <button>Send Message</button>
+            <button id="submit-hqzen-btn">Let's Get Started</button>
         </form>
     `;
   }
